@@ -199,13 +199,13 @@
 
         <div id="home-view" class="view">
 
-            <div class="header"><h1>EarnSmatoo</h1><p>Watch Ads and Earn TAKA </p></div>
+            <div class="header"><h1>EarnSmatoo</h1><p>Watch Ads and Earn USD </p></div>
 
             <div class="card">
 
                 <h2>Current Balance</h2>
 
-                <div class="balance-amount" id="balanceDisplay">TAKA  0.00</div>
+                <div class="balance-amount" id="balanceDisplay">USD  0.00</div>
 
                 <div class="ad-info-grid">
 
@@ -217,9 +217,9 @@
 
             </div>
 
-            <div class="ad-buttons"><button class="btn" id="rewardedBtn">Watch Ad (25 TAKA )</button></div>
+            <div class="ad-buttons"><button class="btn" id="rewardedBtn">Watch Ad (0.25 USD )</button></div>
 
-            <button class="btn" id="mainWithdrawBtn" disabled>Reach 1000 TAKA  to Withdraw</button>
+            <button class="btn" id="mainWithdrawBtn" disabled>Reach 10.00 USD  to Withdraw</button>
 
         </div>
 
@@ -235,9 +235,9 @@
 
                 <h2>Your Balance</h2>
 
-                <div class="balance-amount" id="withdrawBalanceDisplay">TAKA  0.00</div>
+                <div class="balance-amount" id="withdrawBalanceDisplay">USD  0.00</div>
 
-                <p style="color: var(--tg-theme-hint-color); margin-top: 15px;">Minimum withdrawal is 1000 TAKA </p>
+                <p style="color: var(--tg-theme-hint-color); margin-top: 15px;">Minimum withdrawal is 10.00 USD </p>
 
             </div>
 
@@ -277,7 +277,7 @@
 
                     <div class="ad-info-item"><h3 id="referralCountDisplay">0</h3><p>Total Referrals</p></div>
 
-                    <div class="ad-info-item"><h3 id="referralBonTAKA isplay">TAKA  0.00</h3><p>Referral Earnings</p></div>
+                    <div class="ad-info-item"><h3 id="referralBonUSD isplay">USD  0.00</h3><p>Referral Earnings</p></div>
 
                 </div>
 
@@ -287,7 +287,7 @@
 
                 <h2>Your Referral Link</h2>
 
-                <p>Share this link with your friends. You get 50 TAKA  for each verified friend who joins!</p>
+                <p>Share this link with your friends. You get 50 USD  for each verified friend who joins!</p>
 
                 <p id="referralLink" title="Click to copy"></p>
 
@@ -343,7 +343,7 @@
 
                   finalWithdrawBtn = document.getElementById('finalWithdrawBtn'), referralLinkDisplay = document.getElementById('referralLink'),
 
-                  referralCountDisplay = document.getElementById('referralCountDisplay'), referralBonTAKA isplay = document.getElementById('referralBonTAKA isplay'),
+                  referralCountDisplay = document.getElementById('referralCountDisplay'), referralBonUSD isplay = document.getElementById('referralBonUSD isplay'),
 
                   adminPanel = document.getElementById('adminPanel'), userInfoDisplay = document.getElementById('userInfo');
 
@@ -361,11 +361,11 @@
 
             
 
-            const WITHDRAW_THRESHOLD = 10;      // 1000 TAKA 
+            const WITHDRAW_THRESHOLD = 10;      // 10.00 USD 
 
-            const AD_REWARD_CENTS = 1;          // 25 TAKA 
+            const AD_REWARD_CENTS = 1;          // 0.25 USD 
 
-            const REFERRAL_BONUS_TAKA  = 0.5;    // 50 TAKA 
+            const REFERRAL_BONUS_USD  = 0.5;    // 0.50 USD 
 
             const DAILY_AD_LIMIT = 10;
 
@@ -373,7 +373,7 @@
 
             // --- App State ---
 
-            // balanceInCents is used to avoid floating point issues. 100 cents = 1 TAKA .
+            // balanceInCents is used to avoid floating point issues. 100 cents = 1 USD .
 
             let state = {
 
@@ -399,7 +399,7 @@
 
                 try {
 
-                    const savedState = JSON.parse(localStorage.getItem('earningAppTAKA State'));
+                    const savedState = JSON.parse(localStorage.getItem('earningAppUSD State'));
 
                     if (savedState) { 
 
@@ -431,7 +431,7 @@
 
                 try {
 
-                    localStorage.setItem('earningAppTAKA State', JSON.stringify(state));
+                    localStorage.setItem('earningAppUSD State', JSON.stringify(state));
 
                 } catch (e) { console.error("Could not save state", e); }
 
@@ -443,19 +443,19 @@
 
             function updateUI() {
 
-                const balanceInTAKA  = (state.balanceInCents / 100).toFixed(2);
+                const balanceInUSD  = (state.balanceInCents / 100).toFixed(2);
 
                 
 
                 // Home & Withdraw Views
 
-                balanceDisplay.textContent = `TAKA  ${balanceInTAKA }`;
+                balanceDisplay.textContent = `USD  ${balanceInUSD }`;
 
                 adCountDisplay.textContent = state.totalAdCount;
 
                 dailyAdCountDisplay.textContent = `${state.dailyAdCount} / ${DAILY_AD_LIMIT}`;
 
-                withdrawBalanceDisplay.textContent = `TAKA  ${balanceInTAKA }`;
+                withdrawBalanceDisplay.textContent = `USD  ${balanceInUSD }`;
 
                 
 
@@ -463,25 +463,25 @@
 
                 referralCountDisplay.textContent = state.referralCount;
 
-                const referralBonus = (state.referralCount * REFERRAL_BONUS_TAKA ).toFixed(2);
+                const referralBonus = (state.referralCount * REFERRAL_BONUS_USD ).toFixed(2);
 
-                referralBonTAKA isplay.textContent = `TAKA  ${referralBonus}`;
+                referralBonUSD isplay.textContent = `USD  ${referralBonus}`;
 
 
 
                 // Button States
 
-                const isWithdrawalPossible = parseFloat(balanceInTAKA ) >= WITHDRAW_THRESHOLD;
+                const isWithdrawalPossible = parseFloat(balanceInUSD ) >= WITHDRAW_THRESHOLD;
 
                 mainWithdrawBtn.disabled = !isWithdrawalPossible;
 
-                mainWithdrawBtn.textContent = isWithdrawalPossible ? 'Go to Withdraw' : `Reach ${WITHDRAW_THRESHOLD.toFixed(2)} TAKA  to Withdraw`;
+                mainWithdrawBtn.textContent = isWithdrawalPossible ? 'Go to Withdraw' : `Reach ${WITHDRAW_THRESHOLD.toFixed(2)} USD  to Withdraw`;
 
                 
 
                 finalWithdrawBtn.disabled = !isWithdrawalPossible;
 
-                finalWithdrawBtn.textContent = isWithdrawalPossible ? `Withdraw ${balanceInTAKA } TAKA ` : `Minimum ${WITHDRAW_THRESHOLD.toFixed(2)} TAKA  required`;
+                finalWithdrawBtn.textContent = isWithdrawalPossible ? `Withdraw ${balanceInUSD } USD ` : `Minimum ${WITHDRAW_THRESHOLD.toFixed(2)} USD  required`;
 
                 
 
@@ -489,7 +489,7 @@
 
                 rewardedBtn.disabled = adLimitReached;
 
-                rewardedBtn.textContent = adLimitReached ? 'Daily Limit Reached' : 'Watch Ad (+0.01 TAKA )';
+                rewardedBtn.textContent = adLimitReached ? 'Daily Limit Reached' : 'Watch Ad (+0.01 USD )';
 
             }
 
@@ -541,7 +541,7 @@
 
                 
 
-                showStatus(`Success! +${(AD_REWARD_CENTS / 100).toFixed(2)} TAKA  has been added.`, 'success');
+                showStatus(`Success! +${(AD_REWARD_CENTS / 100).toFixed(2)} USD  has been added.`, 'success');
 
                 saveState();
 
@@ -585,25 +585,25 @@
 
             function handleWithdrawal() {
 
-                const balanceInTAKA  = (state.balanceInCents / 100).toFixed(2);
+                const balanceInUSD  = (state.balanceInCents / 100).toFixed(2);
 
                 const walletAddress = paymentAddressInput.value.trim();
 
 
 
-                if (parseFloat(balanceInTAKA ) < WITHDRAW_THRESHOLD) {
+                if (parseFloat(balanceInUSD ) < WITHDRAW_THRESHOLD) {
 
-                    showStatus(`You need at least ${WITHDRAW_THRESHOLD.toFixed(2)} TAKA  to withdraw.`, 'error');
+                    showStatus(`You need at least ${WITHDRAW_THRESHOLD.toFixed(2)} USD  to withdraw.`, 'error');
 
                     return;
 
                 }
 
-                // Basic validation for TAKA  TRC20 address
+                // Basic validation for USD  TRC20 address
 
                 if (!walletAddress.startsWith('T') || walletAddress.length < 34) {
 
-                    showStatus('Please enter a valid TAKA  (TRC20) wallet address.', 'error');
+                    showStatus('Please enter a valid USD  (TRC20) wallet address.', 'error');
 
                     return;
 
@@ -611,7 +611,7 @@
 
                 const user = tg.initDataUnsafe.user;
 
-                const message = `--- Withdrawal Request ---\n\nUser ID: ${user.id}\nName: ${user.first_name} ${user.last_name || ''}\nUsername: @${user.username || 'N/A'}\n\nAmount: ${balanceInTAKA } TAKA \nWallet Address: ${walletAddress}`;
+                const message = `--- Withdrawal Request ---\n\nUser ID: ${user.id}\nName: ${user.first_name} ${user.last_name || ''}\nUsername: @${user.username || 'N/A'}\n\nAmount: ${balanceInUSD } USD \nWallet Address: ${walletAddress}`;
 
                 
 
@@ -679,7 +679,7 @@
 
             4. If valid, the server updates User A's data in a database (increments referralCount).
 
-            5. The server then adds the 0.5 TAKA  bonus to User A's balance.
+            5. The server then adds the 0.5 USD  bonus to User A's balance.
 
             6. When User A opens the app, it should fetch the latest state (including referrals) from the server.
 

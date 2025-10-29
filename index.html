@@ -1,793 +1,145 @@
-<!DOCTYPE html>
-
-<html lang="en"
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-
-    <title>EarnSmatoo</title>
-
-    
-
-    <!-- 1. Monetage SDK Script -->
-
-    <<script src='//libtl.com/sdk.js' data-zone='10105446' data-sdk='show_10105446'></script>
-
-
-    <!-- 2. Telegram Web App Script -->
-
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-
-
-    <style>
-
-        /* CSS Code (No changes needed here) */
-
-        :root {
-
-            --tg-theme-bg-color: #121212; --tg-theme-text-color: #e0e0e0; --tg-theme-button-color: #007bff;
-
-            --tg-theme-button-text-color: #ffffff; --tg-theme-hint-color: #8a8a8a; --success-color: #28a745;
-
-            --warning-color: #ffc107; --danger-color: #dc3545; --secondary-bg-color: #1e1e1e; --border-color: #333333;
-
-        }
-
-        body {
-
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0;
-
-            padding: 20px 15px 90px 15px; background-color: var(--tg-theme-bg-color); color: var(--tg-theme-text-color);
-
-            display: flex; flex-direction: column; align-items: center; text-align: center; min-height: 100vh; box-sizing: border-box;
-
-        }
-
-        .container { width: 100%; max-width: 500px; }
-
-        .view { display: none; width: 100%; animation: fadeIn 0.3s ease-in-out; }
-
-        #home-view { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .header { margin-bottom: 25px; }
-
-        .header h1 { font-size: 32px; font-weight: 700; margin-bottom: 5px; color: #ffffff; }
-
-        .header p { color: var(--tg-theme-hint-color); font-size: 16px; }
-
-        .card {
-
-            background-color: var(--secondary-bg-color); padding: 25px; border-radius: 16px; margin-bottom: 25px;
-
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color);
-
-        }
-
-        .card h2 {
-
-            margin: 0 0 12px 0; font-size: 16px; color: var(--tg-theme-hint-color); font-weight: 500;
-
-            text-transform: uppercase; letter-spacing: 0.5px;
-
-        }
-
-        .balance-amount { font-size: 42px; font-weight: 700; color: #ffffff; margin-bottom: 10px; }
-
-        .ad-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: center; }
-
-        .ad-info-item h3 { font-size: 20px; font-weight: 600; margin: 0 0 5px 0; color: #ffffff; }
-
-        .ad-info-item p { font-size: 14px; color: var(--tg-theme-hint-color); margin: 0; }
-
-        .ad-buttons { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
-
-        .btn {
-
-            width: 100%; padding: 16px; font-size: 18px; font-weight: 600; border: none; border-radius: 12px; cursor: pointer;
-
-            transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-
-            background: linear-gradient(145deg, var(--tg-theme-button-color), #0056b3); color: var(--tg-theme-button-text-color);
-
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
-
-        }
-
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 123, 255, 0.3); }
-
-        .btn:active { transform: scale(0.98); }
-
-        .btn:disabled { background: #555; color: #888; cursor: not-allowed; box-shadow: none; transform: none; }
-
-        #mainWithdrawBtn { background: linear-gradient(145deg, var(--success-color), #1e7e34); box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2); }
-
-        #mainWithdrawBtn:disabled { background: #555; box-shadow: none; }
-
-        .status-message {
-
-            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 480px;
-
-            padding: 12px 15px; border-radius: 10px; font-weight: 500; display: none; animation: fadeIn 0.3s;
-
-            z-index: 1000; box-sizing: border-box;
-
-        }
-
-        .success { display: block; background-color: rgba(40, 167, 69, 0.25); border-left: 5px solid var(--success-color); color: var(--success-color); }
-
-        .error { display: block; background-color: rgba(220, 53, 69, 0.25); border-left: 5px solid var(--danger-color); color: var(--danger-color); }
-
-        .info { display: block; background-color: rgba(0, 123, 255, 0.25); border-left: 5px solid var(--tg-theme-button-color); color: #008cff; }
-
-        .footer-nav {
-
-            position: fixed; bottom: 0; left: 0; right: 0; background-color: var(--secondary-bg-color); display: flex;
-
-            justify-content: space-around; padding: 10px 0; box-shadow: 0 -4px 12px rgba(0,0,0,0.3);
-
-            border-top: 1px solid var(--border-color); z-index: 999;
-
-        }
-
-        .nav-btn {
-
-            background: none; border: none; color: var(--tg-theme-hint-color); display: flex; flex-direction: column;
-
-            align-items: center; font-size: 12px; font-weight: 500; cursor: pointer; padding: 5px 15px;
-
-            border-radius: 12px; transition: color 0.2s, background-color 0.2s;
-
-        }
-
-        .nav-btn.active { color: var(--tg-theme-button-color); }
-
-        .nav-btn:hover:not(.active) { color: #ffffff; }
-
-        .nav-btn .icon { width: 28px; height: 28px; margin-bottom: 4px; }
-
-        .input-group { margin-bottom: 20px; text-align: left; }
-
-        .input-group label { display: block; margin-bottom: 8px; color: var(--tg-theme-hint-color); font-size: 14px; font-weight: 500; }
-
-        .input-group input {
-
-            width: 100%; padding: 14px; border-radius: 10px; border: 1px solid var(--border-color);
-
-            background-color: #333; color: var(--tg-theme-text-color); font-size: 16px; box-sizing: border-box;
-
-        }
-
-        .input-group input:focus { outline: none; border-color: var(--tg-theme-button-color); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2); }
-
-        #referralLink {
-
-            background-color: #111; padding: 15px; border-radius: 10px; word-wrap: break-word;
-
-            border: 1px dashed var(--tg-theme-hint-color); margin-top: 15px; cursor: pointer; color: #e0e0e0;
-
-            transition: background-color 0.2s; text-align: left;
-
-        }
-
-        #referralLink:hover { background-color: #2a2a2a; }
-
-        .admin-panel {
-
-            display: none; margin-top: 30px; padding: 15px; border: 1px solid var(--warning-color);
-
-            border-radius: 10px; background-color: rgba(255, 193, 7, 0.1);
-
-        }
-
-        .admin-panel h3 { color: var(--warning-color); margin-top: 0; }
-
-    </style>
-
-</head>
-
-<body>
-
-<script type='text/javascript' src='//pl26604097.profitableratecpm.com/0f/56/94/0f5694f9b53dd9db6b20e82218735b99.js'></script>
-
-    <div class="container">
-
-        <!-- Home / Task View -->
-
-        <div id="home-view" class="view">
-
-            <div class="header"><h1>EarnSmatoo</h1><p>Watch Ads and Earn USD</p></div>
-
-            <div class="card">
-
-                <h2>Current Balance</h2>
-
-                <div class="balance-amount" id="balanceDisplay">USD 0.00</div>
-
-                <div class="ad-info-grid">
-
-                    <div class="ad-info-item"><h3 id="adCountDisplay">0</h3><p>Total Ads Watched</p></div>
-
-                    <div class="ad-info-item"><h3 id="dailyAdCountDisplay">0 / 10</h3><p>Today's Ads</p></div>
-
-                </div>
-
-            </div>
-
-            <div class="ad-buttons"><button class="btn" id="rewardedBtn">Watch Ad (0.25 USD)</button></div>
-
-            <button class="btn" id="mainWithdrawBtn" disabled>Reach 10.00 USD to Withdraw</button>
-
-        </div>
-
-
-
-        <!-- Withdraw View -->
-
-        <div id="withdraw-view" class="view">
-
-            <div class="header"><h1>Withdraw</h1><p>Request your earnings</p></div>
-
-            <div class="card">
-
-                <h2>Your Balance</h2>
-
-                <div class="balance-amount" id="withdrawBalanceDisplay">USD 0.00</div>
-
-                <p style="color: var(--tg-theme-hint-color); margin-top: 15px;">Minimum withdrawal is 10.00 USD
-                    
-                     1 USD = 100 TAKA</p>
-
-            </div>
-
-            <div class="card">
-
-                <h2>Payment Details</h2>
-
-                <div class="input-group">
-
-                    <label for="paymentAddress">Bkash</label>
-
-                    <input type="text" id="paymentAddress" placeholder="(Bkash Account Number)">
-                    <div class="input-group">
-                     <label for="paymentAddress">Nagad</label>
-                     <input type="text" id="paymentAddress" placeholder="(Nagad Account Number)">
-                </div>
-
-                <button class="btn" id="finalWithdrawBtn" disabled>Withdraw</button>
-
-            </div>
-
-        </div>
-
-        
-
-        <!-- Referral View -->
-
-        <div id="referral-view" class="view">
-
-            <div class="header"><h1>Referrals</h1><p>Invite friends and earn more!</p></div>
-
-            <div class="card">
-
-                <h2>Your Referral Stats</h2>
-
-                <div class="ad-info-grid">
-
-                    <div class="ad-info-item"><h3 id="referralCountDisplay">0</h3><p>Total Referrals</p></div>
-
-                    <div class="ad-info-item"><h3 id="referralBonusDisplay">USD 0.00</h3><p>Referral Earnings</p></div>
-
-                </div>
-
-            </div>
-
-            <div class="card">
-
-                <h2>Your Referral Link</h2>
-
-                <p>Share this link with your friends. You get 0.5 USD for each verified friend who joins!</p>
-
-                <p id="referralLink" title="Click to copy"></p>
-
-                <p style="font-size:12px; color:var(--tg-theme-hint-color); margin-top:15px;">Note: Referral rewards require backend processing and will be credited to your balance after verification.</p>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- Common Elements -->
-
-        <div class="status-message" id="statusMessage"></div>
-
-        <div class="admin-panel" id="adminPanel"><h3>👑 Admin Panel</h3><p id="userInfo"></p></div>
-
-    </div>
-
-
-
-    <!-- Footer Navigation -->
-
-    <footer class="footer-nav">
-
-        <button class="nav-btn active" id="navHome"><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></span><span>Home</span></button>
-
-        <button class="nav-btn" id="navWithdraw"><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17.31 8.91a1 1 0 0 0-1.42 0l-4.24 4.24-2.12-2.12a1 1 0 1 0-1.42 1.42l2.83 2.83a1 1 0 0 0 1.42 0l5-5a1 1 0 0 0 0-1.42zM20 12a8 8 0 1 1-8-8 8 8 0 0 1 8 8zm-2 0a6 6 0 1 0-6 6 6 6 0 0 0 6-6z"/></svg></span><span>Withdraw</span></button>
-
-        <button class="nav-btn" id="navRefer"><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V18h14v-1.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V18h6v-1.5c0-2.33-4.67-3.5-7-3.5z"/></svg></span><span>Referrals</span></button>
-
-    </footer>
-
-
-
-    <script>
-
-        document.addEventListener('DOMContentLoaded', function () {
-
-            const tg = window.Telegram.WebApp;
-
-
-
-            // --- DOM Elements ---
-
-            const balanceDisplay = document.getElementById('balanceDisplay'), adCountDisplay = document.getElementById('adCountDisplay'),
-
-                  dailyAdCountDisplay = document.getElementById('dailyAdCountDisplay'), rewardedBtn = document.getElementById('rewardedBtn'),
-
-                  mainWithdrawBtn = document.getElementById('mainWithdrawBtn'), statusMessage = document.getElementById('statusMessage'),
-
-                  withdrawBalanceDisplay = document.getElementById('withdrawBalanceDisplay'), paymentAddressInput = document.getElementById('paymentAddress'),
-
-                  finalWithdrawBtn = document.getElementById('finalWithdrawBtn'), referralLinkDisplay = document.getElementById('referralLink'),
-
-                  referralCountDisplay = document.getElementById('referralCountDisplay'), referralBonusDisplay = document.getElementById('referralBonusDisplay'),
-
-                  adminPanel = document.getElementById('adminPanel'), userInfoDisplay = document.getElementById('userInfo');
-
-
-
-            // --- App Constants & Configuration ---
-
-            // To set up your bot, search for "EDIT_THIS" and replace the values on the following lines.
-
-            const ADMIN_ID = 8377762141; // EDIT_THIS: Replace with your numeric Telegram User ID.
-
-            const BOT_USERNAME = 'earnsmatoo_bot'; // EDIT_THIS: Replace with your bot's username.
-
-            const WEBAPP_NAME = 'earnsmatoo';   // EDIT_THIS: Replace with your web app's short name.
-
-            
-
-            const WITHDRAW_THRESHOLD = 10;      // 10 USD
-
-            const AD_REWARD_CENTS = 1;          // 0.25 USD = 1 cent
-
-            const REFERRAL_BONUS_USD = 0.5;    // 0.5 USD
-
-            const DAILY_AD_LIMIT = 10;
-
-
-
-            // --- App State ---
-
-            // balanceInCents is used to avoid floating point issues. 100 cents = 1 USD.
-
-            let state = {
-
-                balanceInCents: 0,
-
-                totalAdCount: 0,
-
-                dailyAdCount: 0,
-
-                lastAdDate: null,
-
-                referralCount: 0 
-
-            };
-
-
-
-            // ---- State Management ----
-
-            function getTodayDateString() { return new Date().toISOString().split('T')[0]; }
-
-            function loadState() {
-
-                try {
-
-                    const savedState = JSON.parse(localStorage.getItem('earningAppUSDState'));
-
-                    if (savedState) { 
-
-                        // Ensure all state properties are present
-
-                        state = { ...state, ...savedState };
-
-                    }
-
-                } catch (e) { console.error("Could not load state", e); }
-
-                
-
-                // Reset daily ad count if it's a new day
-
-                if (state.lastAdDate !== getTodayDateString()) {
-
-                    state.dailyAdCount = 0;
-
-                    state.lastAdDate = getTodayDateString();
-
-                    saveState();
-
-                }
-
-            }
-
-            function saveState() {
-
-                try {
-
-                    localStorage.setItem('earningAppUSDState', JSON.stringify(state));
-
-                } catch (e) { console.error("Could not save state", e); }
-
-            }
-
-            
-
-            // ---- UI Updates & View Management ----
-
-            function updateUI() {
-
-                const balanceInUSD = (state.balanceInCents / 100).toFixed(2);
-
-                
-
-                // Home & Withdraw Views
-
-                balanceDisplay.textContent = `USD ${balanceInUSD}`;
-
-                adCountDisplay.textContent = state.totalAdCount;
-
-                dailyAdCountDisplay.textContent = `${state.dailyAdCount} / ${DAILY_AD_LIMIT}`;
-
-                withdrawBalanceDisplay.textContent = `USD ${balanceInUSD}`;
-
-                
-
-                // Referral View
-
-                referralCountDisplay.textContent = state.referralCount;
-
-                const referralBonus = (state.referralCount * REFERRAL_BONUS_USD).toFixed(2);
-
-                referralBonusDisplay.textContent = `USD ${referralBonus}`;
-
-
-
-                // Button States
-
-                const isWithdrawalPossible = parseFloat(balanceInUSD) >= WITHDRAW_THRESHOLD;
-
-                mainWithdrawBtn.disabled = !isWithdrawalPossible;
-
-                mainWithdrawBtn.textContent = isWithdrawalPossible ? 'Go to Withdraw' : `Reach ${WITHDRAW_THRESHOLD.toFixed(2)} USD to Withdraw`;
-
-                
-
-                finalWithdrawBtn.disabled = !isWithdrawalPossible;
-
-                finalWithdrawBtn.textContent = isWithdrawalPossible ? `Withdraw ${balanceInUSD} USD` : `Minimum ${WITHDRAW_THRESHOLD.toFixed(2)} USD required`;
-
-                
-
-                const adLimitReached = state.dailyAdCount >= DAILY_AD_LIMIT;
-
-                rewardedBtn.disabled = adLimitReached;
-
-                rewardedBtn.textContent = adLimitReached ? 'Daily Limit Reached' : 'Watch Ad (+0.01 USD)';
-
-            }
-
-            
-
-            function showView(viewId) {
-
-                document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
-
-                document.getElementById(viewId).style.display = 'block';
-
-                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-
-                const activeNavId = { 'home-view': 'navHome', 'withdraw-view': 'navWithdraw', 'referral-view': 'navRefer' }[viewId];
-
-                if(activeNavId) document.getElementById(activeNavId).classList.add('active');
-
-            }
-
-
-
-            let statusTimeout;
-
-            function showStatus(message, type, duration = 4000) {
-
-                clearTimeout(statusTimeout);
-
-                statusMessage.textContent = message;
-
-                statusMessage.className = `status-message ${type}`;
-
-                statusTimeout = setTimeout(() => { statusMessage.style.display = 'none'; }, duration);
-
-            }
-
-
-
-            // ---- Ad Handling ----
-
-            function handleAdSuccess() {
-
-                state.totalAdCount++;
-
-                state.dailyAdCount++;
-
-                state.lastAdDate = getTodayDateString();
-
-                state.balanceInCents += AD_REWARD_CENTS;
-
-                
-
-                showStatus(`Success! +${(AD_REWARD_CENTS / 100).toFixed(2)} USD has been added.`, 'success');
-
-                saveState();
-
-                updateUI();
-
-            }
-
-
-
-            function handleAdError(error) {
-
-                console.error('Ad Error:', error);
-
-                showStatus('Failed to load ad. Please try again.', 'error');
-
-            }
-
-
-
-            // ---- App Logic ----
-
-            function requestAd() {
-
-                if (state.dailyAdCount >= DAILY_AD_LIMIT) {
-
-                    showStatus("You've reached the daily ad limit.", 'error');
-
-                    return;
-
-                }
-
-                showStatus('Loading ad, please wait...', 'info');
-
-                // The Promise is a simulator for the ad network callback
-
-                Promise.resolve(show_9459352()).then(handleAdSuccess).catch(handleAdError);
-
-            }
-
-
-
-            function handleWithdrawal() {
-
-                const balanceInUSD = (state.balanceInCents / 100).toFixed(2);
-
-                const walletAddress = paymentAddressInput.value.trim();
-
-
-
-                if (parseFloat(balanceInUSD) < WITHDRAW_THRESHOLD) {
-
-                    showStatus(`You need at least ${WITHDRAW_THRESHOLD.toFixed(2)} USD to withdraw.`, 'error');
-
-                    return;
-
-                }
-
-                // Basic validation for USD TRC20 address
-
-                if (!walletAddress.startsWith('T') || walletAddress.length < 34) {
-
-                    showStatus('Please enter a valid USD (TRC20) wallet address.', 'error');
-
-                    return;
-
-                }
-
-                const user = tg.initDataUnsafe.user;
-
-                const message = `--- Withdrawal Request ---\n\nUser ID: ${user.id}\nName: ${user.first_name} ${user.last_name || ''}\nUsername: @${user.username || 'N/A'}\n\nAmount: ${balanceInUSD} USD\nWallet Address: ${walletAddress}`;
-
-                
-
-                tg.sendData(message);
-
-                showStatus('Your withdrawal request has been sent for review.', 'success');
-
-                
-
-                // Reset balance after request
-
-                state.balanceInCents = 0;
-
-                saveState();
-
-                updateUI();
-
-                paymentAddressInput.value = '';
-
-                showView('home-view');
-
-            }
-
-            
-
-            function generateReferralLink() {
-
-                const user = tg.initDataUnsafe.user;
-
-                if (user && user.id && BOT_USERNAME !== 'YourBotUsername' && WEBAPP_NAME !== 'YourWebAppName') {
-
-                    referralLinkDisplay.textContent = `https://t.me/${BOT_USERNAME}/${WEBAPP_NAME}?startapp=ref${user.id}`;
-
-                } else {
-
-                    referralLinkDisplay.textContent = "Referral link cannot be generated. Configure bot info in the script.";
-
-                    referralLinkDisplay.style.color = "var(--warning-color)";
-
-                    referralLinkDisplay.style.cursor = "default";
-
-                }
-
-            }
-
-
-
-            /* 
-
-            --- DEVELOPER NOTE ON REFERRALS ---
-
-            The current code only SHOWS referral stats stored locally. It does NOT automatically
-
-            increment the count or add the bonus when a new user joins.
-
-            
-
-            A secure referral system requires a backend server:
-
-            1. New User (User B) clicks referral link from User A.
-
-            2. User B's app sends their own ID and the referrer's ID (from start_param) to your server.
-
-            3. Your server verifies the referral (e.g., checks if User B is new).
-
-            4. If valid, the server updates User A's data in a database (increments referralCount).
-
-            5. The server then adds the 0.5 USD bonus to User A's balance.
-
-            6. When User A opens the app, it should fetch the latest state (including referrals) from the server.
-
-            
-
-            The logic below is a placeholder for the user who was referred.
-
-            */
-
-            function handleReferralStart() {
-
-                if (tg.initDataUnsafe.start_param) {
-
-                    const referrerId = tg.initDataUnsafe.start_param.replace('ref', '');
-
-                    console.log("App started with referral parameter. Referrer ID:", referrerId);
-
-                    // You can show a welcome message to the new user.
-
-                    // The actual reward logic MUST be handled on a backend.
-
-                    showStatus('Welcome! You joined via a referral link.', 'success', 5000);
-
-                }
-
-            }
-
-
-
-
-
-            // ---- Event Listeners ----
-
-            rewardedBtn.addEventListener('click', () => requestAd());
-
-            finalWithdrawBtn.addEventListener('click', handleWithdrawal);
-
-            document.getElementById('navHome').addEventListener('click', () => showView('home-view'));
-
-            document.getElementById('navWithdraw').addEventListener('click', () => showView('withdraw-view'));
-
-            document.getElementById('navRefer').addEventListener('click', () => showView('referral-view'));
-
-            mainWithdrawBtn.addEventListener('click', () => showView('withdraw-view'));
-
-
-
-            referralLinkDisplay.addEventListener('click', () => {
-
-                if(navigator.clipboard && referralLinkDisplay.textContent.startsWith('https://')) {
-
-                    navigator.clipboard.writeText(referralLinkDisplay.textContent)
-
-                        .then(() => showStatus('Referral link copied!', 'success'))
-
-                        .catch(() => showStatus('Could not copy link.', 'error'));
-
-                }
-
-            });
-
-
-
-            // ---- Initialization ----
-
-            function initializeApp() {
-
-                tg.ready();
-
-                tg.expand();
-
-                
-
-                loadState();
-
-                updateUI();
-
-                generateReferralLink();
-
-                handleReferralStart();
-
-                
-
-                const user = tg.initDataUnsafe.user;
-
-                if (user && user.id === ADMIN_ID) {
-
-                    adminPanel.style.display = 'block';
-
-                    userInfoDisplay.textContent = `Welcome, Admin! User: ${user.first_name} (@${user.username || 'N/A'}), ID: ${user.id}`;
-
-                }
-
-            }
-
-
-
-            initializeApp();
-
-        });
-
-    </script>
-
-</body>
-
-
-</html
+-- Create profiles table
+CREATE TABLE public.profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  account_number TEXT,
+  account_type TEXT CHECK (account_type IN ('bkash', 'nagad')),
+  balance INTEGER DEFAULT 0,
+  referral_code TEXT UNIQUE NOT NULL,
+  referred_by UUID REFERENCES public.profiles(id),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create ads_watched table to track daily ad views
+CREATE TABLE public.ads_watched (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  watched_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  ads_count INTEGER DEFAULT 0 CHECK (ads_count >= 0 AND ads_count <= 10),
+  earnings INTEGER DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(user_id, watched_date)
+);
+
+-- Create referrals table
+CREATE TABLE public.referrals (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  referrer_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  referred_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  earnings INTEGER DEFAULT 50,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(referrer_id, referred_id)
+);
+
+-- Create withdrawal_requests table
+CREATE TABLE public.withdrawal_requests (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  amount INTEGER NOT NULL,
+  account_number TEXT NOT NULL,
+  account_type TEXT NOT NULL,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable RLS
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ads_watched ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.referrals ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.withdrawal_requests ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies for profiles
+CREATE POLICY "Users can view their own profile"
+  ON public.profiles FOR SELECT
+  USING (auth.uid() = id);
+
+CREATE POLICY "Users can update their own profile"
+  ON public.profiles FOR UPDATE
+  USING (auth.uid() = id);
+
+CREATE POLICY "Users can insert their own profile"
+  ON public.profiles FOR INSERT
+  WITH CHECK (auth.uid() = id);
+
+-- RLS Policies for ads_watched
+CREATE POLICY "Users can view their own ads history"
+  ON public.ads_watched FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own ads records"
+  ON public.ads_watched FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own ads records"
+  ON public.ads_watched FOR UPDATE
+  USING (auth.uid() = user_id);
+
+-- RLS Policies for referrals
+CREATE POLICY "Users can view their own referrals"
+  ON public.referrals FOR SELECT
+  USING (auth.uid() = referrer_id OR auth.uid() = referred_id);
+
+CREATE POLICY "System can insert referrals"
+  ON public.referrals FOR INSERT
+  WITH CHECK (true);
+
+-- RLS Policies for withdrawal_requests
+CREATE POLICY "Users can view their own withdrawal requests"
+  ON public.withdrawal_requests FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can create withdrawal requests"
+  ON public.withdrawal_requests FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+-- Function to generate unique referral code
+CREATE OR REPLACE FUNCTION generate_referral_code()
+RETURNS TEXT AS $$
+DECLARE
+  code TEXT;
+  exists BOOLEAN;
+BEGIN
+  LOOP
+    code := upper(substring(md5(random()::text) from 1 for 8));
+    SELECT EXISTS(SELECT 1 FROM public.profiles WHERE referral_code = code) INTO exists;
+    EXIT WHEN NOT exists;
+  END LOOP;
+  RETURN code;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function to handle new user signup
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.profiles (id, name, referral_code)
+  VALUES (
+    NEW.id,
+    COALESCE(NEW.raw_user_meta_data->>'name', 'User'),
+    generate_referral_code()
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+-- Trigger for new user signup
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_new_user();
+
+-- Function to update withdrawal request timestamp
+CREATE OR REPLACE FUNCTION public.update_withdrawal_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger for withdrawal updates
+CREATE TRIGGER update_withdrawal_timestamp
+  BEFORE UPDATE ON public.withdrawal_requests
+  FOR EACH ROW
+  EXECUTE FUNCTION public.update_withdrawal_timestamp();

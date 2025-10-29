@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en"
 
 <head>
 
@@ -201,13 +201,13 @@
 
         <div id="home-view" class="view">
 
-            <div class="header"><h1>EarnSmatoo</h1><p>Watch Ads and Earn USDT</p></div>
+            <div class="header"><h1>EarnSmatoo</h1><p>Watch Ads and Earn USD</p></div>
 
             <div class="card">
 
                 <h2>Current Balance</h2>
 
-                <div class="balance-amount" id="balanceDisplay">USDT 0.00</div>
+                <div class="balance-amount" id="balanceDisplay">USD 0.00</div>
 
                 <div class="ad-info-grid">
 
@@ -219,9 +219,9 @@
 
             </div>
 
-            <div class="ad-buttons"><button class="btn" id="rewardedBtn">Watch Ad (+0.25 USDT)</button></div>
+            <div class="ad-buttons"><button class="btn" id="rewardedBtn">Watch Ad (+0.25 USD)</button></div>
 
-            <button class="btn" id="mainWithdrawBtn" disabled>Reach 10.00 USDT to Withdraw</button>
+            <button class="btn" id="mainWithdrawBtn" disabled>Reach 10.00 USD to Withdraw</button>
 
         </div>
 
@@ -237,9 +237,10 @@
 
                 <h2>Your Balance</h2>
 
-                <div class="balance-amount" id="withdrawBalanceDisplay">USDT 0.00</div>
+                <div class="balance-amount" id="withdrawBalanceDisplay">USD 0.00</div>
 
-                <p style="color: var(--tg-theme-hint-color); margin-top: 15px;">Minimum withdrawal is 10.00 USDT.</p>
+                <p style="color: var(--tg-theme-hint-color); margin-top: 15px;">Minimum withdrawal is 10.00 USD.
+                1 USD = 100 TAKA</p>
 
             </div>
 
@@ -278,7 +279,7 @@
 
                     <div class="ad-info-item"><h3 id="referralCountDisplay">0</h3><p>Total Referrals</p></div>
 
-                    <div class="ad-info-item"><h3 id="referralBonusDisplay">USDT 0.00</h3><p>Referral Earnings</p></div>
+                    <div class="ad-info-item"><h3 id="referralBonusDisplay">USD 0.00</h3><p>Referral Earnings</p></div>
 
                 </div>
 
@@ -288,7 +289,7 @@
 
                 <h2>Your Referral Link</h2>
 
-                <p>Share this link with your friends. You get 0.5 USDT for each verified friend who joins!</p>
+                <p>Share this link with your friends. You get 0.5 USD for each verified friend who joins!</p>
 
                 <p id="referralLink" title="Click to copy"></p>
 
@@ -362,11 +363,11 @@
 
             
 
-            const WITHDRAW_THRESHOLD = 10;      // 10 USDT
+            const WITHDRAW_THRESHOLD = 10;      // 10 USD
 
-            const AD_REWARD_CENTS = 1;          // 0.25 USDT = 1 cent
+            const AD_REWARD_CENTS = 1;          // 0.25 USD = 1 cent
 
-            const REFERRAL_BONUS_USDT = 0.5;    // 0.5 USDT
+            const REFERRAL_BONUS_USD = 0.5;    // 0.5 USD
 
             const DAILY_AD_LIMIT = 10;
 
@@ -374,7 +375,7 @@
 
             // --- App State ---
 
-            // balanceInCents is used to avoid floating point issues. 100 cents = 1 USDT.
+            // balanceInCents is used to avoid floating point issues. 100 cents = 1 USD.
 
             let state = {
 
@@ -400,7 +401,7 @@
 
                 try {
 
-                    const savedState = JSON.parse(localStorage.getItem('earningAppUSDTState'));
+                    const savedState = JSON.parse(localStorage.getItem('earningAppUSDState'));
 
                     if (savedState) { 
 
@@ -432,7 +433,7 @@
 
                 try {
 
-                    localStorage.setItem('earningAppUSDTState', JSON.stringify(state));
+                    localStorage.setItem('earningAppUSDState', JSON.stringify(state));
 
                 } catch (e) { console.error("Could not save state", e); }
 
@@ -444,19 +445,19 @@
 
             function updateUI() {
 
-                const balanceInUSDT = (state.balanceInCents / 100).toFixed(2);
+                const balanceInUSD = (state.balanceInCents / 100).toFixed(2);
 
                 
 
                 // Home & Withdraw Views
 
-                balanceDisplay.textContent = `USDT ${balanceInUSDT}`;
+                balanceDisplay.textContent = `USD ${balanceInUSD}`;
 
                 adCountDisplay.textContent = state.totalAdCount;
 
                 dailyAdCountDisplay.textContent = `${state.dailyAdCount} / ${DAILY_AD_LIMIT}`;
 
-                withdrawBalanceDisplay.textContent = `USDT ${balanceInUSDT}`;
+                withdrawBalanceDisplay.textContent = `USD ${balanceInUSD}`;
 
                 
 
@@ -464,25 +465,25 @@
 
                 referralCountDisplay.textContent = state.referralCount;
 
-                const referralBonus = (state.referralCount * REFERRAL_BONUS_USDT).toFixed(2);
+                const referralBonus = (state.referralCount * REFERRAL_BONUS_USD).toFixed(2);
 
-                referralBonusDisplay.textContent = `USDT ${referralBonus}`;
+                referralBonusDisplay.textContent = `USD ${referralBonus}`;
 
 
 
                 // Button States
 
-                const isWithdrawalPossible = parseFloat(balanceInUSDT) >= WITHDRAW_THRESHOLD;
+                const isWithdrawalPossible = parseFloat(balanceInUSD) >= WITHDRAW_THRESHOLD;
 
                 mainWithdrawBtn.disabled = !isWithdrawalPossible;
 
-                mainWithdrawBtn.textContent = isWithdrawalPossible ? 'Go to Withdraw' : `Reach ${WITHDRAW_THRESHOLD.toFixed(2)} USDT to Withdraw`;
+                mainWithdrawBtn.textContent = isWithdrawalPossible ? 'Go to Withdraw' : `Reach ${WITHDRAW_THRESHOLD.toFixed(2)} USD to Withdraw`;
 
                 
 
                 finalWithdrawBtn.disabled = !isWithdrawalPossible;
 
-                finalWithdrawBtn.textContent = isWithdrawalPossible ? `Withdraw ${balanceInUSDT} USDT` : `Minimum ${WITHDRAW_THRESHOLD.toFixed(2)} USDT required`;
+                finalWithdrawBtn.textContent = isWithdrawalPossible ? `Withdraw ${balanceInUSD} USD` : `Minimum ${WITHDRAW_THRESHOLD.toFixed(2)} USD required`;
 
                 
 
@@ -490,7 +491,7 @@
 
                 rewardedBtn.disabled = adLimitReached;
 
-                rewardedBtn.textContent = adLimitReached ? 'Daily Limit Reached' : 'Watch Ad (+0.01 USDT)';
+                rewardedBtn.textContent = adLimitReached ? 'Daily Limit Reached' : 'Watch Ad (+0.01 USD)';
 
             }
 
@@ -542,7 +543,7 @@
 
                 
 
-                showStatus(`Success! +${(AD_REWARD_CENTS / 100).toFixed(2)} USDT has been added.`, 'success');
+                showStatus(`Success! +${(AD_REWARD_CENTS / 100).toFixed(2)} USD has been added.`, 'success');
 
                 saveState();
 
@@ -586,25 +587,25 @@
 
             function handleWithdrawal() {
 
-                const balanceInUSDT = (state.balanceInCents / 100).toFixed(2);
+                const balanceInUSD = (state.balanceInCents / 100).toFixed(2);
 
                 const walletAddress = paymentAddressInput.value.trim();
 
 
 
-                if (parseFloat(balanceInUSDT) < WITHDRAW_THRESHOLD) {
+                if (parseFloat(balanceInUSD) < WITHDRAW_THRESHOLD) {
 
-                    showStatus(`You need at least ${WITHDRAW_THRESHOLD.toFixed(2)} USDT to withdraw.`, 'error');
+                    showStatus(`You need at least ${WITHDRAW_THRESHOLD.toFixed(2)} USD to withdraw.`, 'error');
 
                     return;
 
                 }
 
-                // Basic validation for USDT TRC20 address
+                // Basic validation for USD TRC20 address
 
                 if (!walletAddress.startsWith('T') || walletAddress.length < 34) {
 
-                    showStatus('Please enter a valid USDT (TRC20) wallet address.', 'error');
+                    showStatus('Please enter a valid USD (TRC20) wallet address.', 'error');
 
                     return;
 
@@ -612,7 +613,7 @@
 
                 const user = tg.initDataUnsafe.user;
 
-                const message = `--- Withdrawal Request ---\n\nUser ID: ${user.id}\nName: ${user.first_name} ${user.last_name || ''}\nUsername: @${user.username || 'N/A'}\n\nAmount: ${balanceInUSDT} USDT\nWallet Address: ${walletAddress}`;
+                const message = `--- Withdrawal Request ---\n\nUser ID: ${user.id}\nName: ${user.first_name} ${user.last_name || ''}\nUsername: @${user.username || 'N/A'}\n\nAmount: ${balanceInUSD} USD\nWallet Address: ${walletAddress}`;
 
                 
 
@@ -680,7 +681,7 @@
 
             4. If valid, the server updates User A's data in a database (increments referralCount).
 
-            5. The server then adds the 0.5 USDT bonus to User A's balance.
+            5. The server then adds the 0.5 USD bonus to User A's balance.
 
             6. When User A opens the app, it should fetch the latest state (including referrals) from the server.
 
